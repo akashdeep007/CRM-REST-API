@@ -2,6 +2,8 @@ package com.springdemo.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -62,7 +64,7 @@ public class CustomerController {
 	
 	@PostMapping("/customers")
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public Customer addCustomer(@RequestBody Customer customer)
+	public Customer addCustomer(@Valid @RequestBody Customer customer)
 	{
 		customer.setId(0);
 		customerService.saveCustomer(customer);
@@ -70,7 +72,7 @@ public class CustomerController {
 	}
 	
 	@PutMapping("/customers")
-	public Customer updateCustomer(@RequestBody Customer customer)
+	public Customer updateCustomer(@Valid @RequestBody Customer customer)
 	{
 		customerService.saveCustomer(customer);
 		return customer;	

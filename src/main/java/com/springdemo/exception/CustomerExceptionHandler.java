@@ -1,7 +1,11 @@
 package com.springdemo.exception;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,6 +23,17 @@ public class CustomerExceptionHandler {
 		error.setMessage(e.getMessage());
 		error.setTimeStamp(System.currentTimeMillis());
 		return new ResponseEntity<ErrorResponse>(error, HttpStatus.NOT_FOUND);
+
+	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorResponse> handleException(MethodArgumentNotValidException e) {
+		List<String> errors = e.getBindingResult().getFieldErrors().stream().map(x -> x.getDefaultMessage())
+				.collect(Collectors.toList());
+		ErrorResponse error = new ErrorResponse();
+		error.setStatusCode(HttpStatus.NOT_ACCEPTABLE.value());
+		error.setMessage(errors.toString());
+		error.setTimeStamp(System.currentTimeMillis());
+		return new ResponseEntity<ErrorResponse>(error, HttpStatus.NOT_ACCEPTABLE);
 
 	}
 
