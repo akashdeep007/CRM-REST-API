@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springdemo.entity.Customer;
 import com.springdemo.exception.CustomerNotFoundException;
 import com.springdemo.service.CustomerService;
+import com.springdemo.utils.SortingUtils;
 
 @RestController
 @RequestMapping("/api")
@@ -26,9 +28,24 @@ public class CustomerController {
 	private CustomerService customerService;
 	
 	@GetMapping("/customers")
-	public List<Customer> getCustomers() throws CustomerNotFoundException
+	public List<Customer> getCustomers(@RequestParam(required = false, name = "sort") String sort) throws CustomerNotFoundException
 	{
-		List<Customer> customers = customerService.getCustomers(0);
+		List<Customer> customers;
+		if(sort!=null)
+		{
+			if(sort.equalsIgnoreCase("firstname"))
+				customers=customerService.getCustomers(SortingUtils.FIRST_NAME);
+			else if(sort.equalsIgnoreCase("lastname"))
+				customers=customerService.getCustomers(SortingUtils.LAST_NAME);
+			else if(sort.equalsIgnoreCase("email"))
+				customers=customerService.getCustomers(SortingUtils.EMAIL);
+			else
+				throw new CustomerNotFoundException("Not a valid parameter");
+		}
+		else
+		{
+		 customers = customerService.getCustomers(0);
+		}
 		if(customers.isEmpty())
 			throw new CustomerNotFoundException("No records exist");
 		return customers;
