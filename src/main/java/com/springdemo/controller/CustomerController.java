@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,5 +57,15 @@ public class CustomerController {
 	{
 		customerService.saveCustomer(customer);
 		return customer;	
+	}
+	
+	@DeleteMapping("/customers/{customerId}")
+	public String deleteCustomer(@PathVariable int customerId) throws CustomerNotFoundException
+	{
+		Customer customer = customerService.getCustomer(customerId);
+		if(customer==null)
+			throw new CustomerNotFoundException("Customer Id -"+customerId+" does not exist");
+		customerService.deleteCustomer(customerId);
+		return "Customer Id -"+customerId+" deleted";	
 	}
 }
